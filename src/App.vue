@@ -1,4 +1,4 @@
-<script>
+<script setup lang="jsx">
 export default {
   render () {
     return (
