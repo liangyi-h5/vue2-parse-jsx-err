@@ -1,4 +1,6 @@
 {
-  "presets": ["@vue/babel-preset-jsx"],
+  "presets": [["@vue/babel-preset-jsx", {
+    "transformOn": true
+  }]],
   "plugins": ["transform-vue-jsx"]
 }
