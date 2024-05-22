@@ -1,14 +1,18 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
-import vueJsx from './vue2-parse-jsx'
+// import vueJsx from './vue2-parse-jsx'
+import vueJsx from 'plugin-vue2-jsx-vite5'
 // import vueJsx from '@vitejs/plugin-vue2-jsx'
+// import vueJsx from '@vue/compiler-sfc'
+
 import { fileURLToPath, URL } from "node:url"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
   plugins: [vue(), vueJsx({
-    include: [/\.[jt]sx$/, /\.vue$/]
+    include: [/\.[jt]sx$/, /\.[jt]s$/, /\.vue$/],
+    extends: [/\.css$/]
   })],
   resolve: {
     alias: {
@@ -21,9 +25,12 @@ export default defineConfig({
       '.vue': 'jsx',
     }
   },
+  css: {
+    preprocessorOptions: {
+    }
+  },
   optimizeDeps: {
     include: [
-      '@vue/babel-preset-jsx',
       'babel-plugin-transform-vue-jsx'
     ]
   }

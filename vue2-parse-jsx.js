@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import path from 'node:path'
 // import type { types } from '@babel/core'
 import * as babel from '@babel/core'
+// import jsx from './jsx.js'
 import jsx from '@vue/babel-preset-jsx'
 // @ts-expect-error missing type
 import importMeta from '@babel/plugin-syntax-import-meta'
@@ -11,7 +12,7 @@ import { normalizePath } from 'vite'
 // import type { Plugin } from 'vite'
 
 import { HMR_RUNTIME_ID, hmrRuntimeCode } from './hmrRuntime'
-
+console.log(jsx, 'jsx------')
 // import type { Options } from './types'
 // export * from './types'
 
@@ -41,12 +42,10 @@ function vue2JsxPlugin(options = {}) {
   let root = ''
   let needHmr = false
   let needSourceMap = true
-  console.log('load-jsx--------')
   return {
     name: 'vite:vue2-jsx',
 
     config(config) {
-      console.log('config----------')
       return {
         // only apply esbuild to ts files
         // since we are handling jsx and tsx now
@@ -57,14 +56,12 @@ function vue2JsxPlugin(options = {}) {
     },
 
     configResolved(config) {
-      console.log('configResolved----------', config)
       needHmr = config.command === 'serve' && !config.isProduction
       needSourceMap = config.command === 'serve' || !!config.build.sourcemap
       root = config.root
     },
 
     resolveId(id) {
-      console.log('resolveId----------')
       if (id === ssrRegisterHelperId) {
         return id
       }
@@ -73,9 +70,7 @@ function vue2JsxPlugin(options = {}) {
         return id
       }
     },
-
     load(id) {
-      console.log('load----------')
       if (id === ssrRegisterHelperId) {
         return ssrRegisterHelperCode
       }
@@ -86,7 +81,7 @@ function vue2JsxPlugin(options = {}) {
     },
 
     async transform(code, id, opt) {
-      console.log('transform----------')
+      console.log('transform------')
       const ssr = opt?.ssr === true
       const {
         include,
@@ -97,11 +92,23 @@ function vue2JsxPlugin(options = {}) {
 
       const filter = createFilter(include || /\.[jt]sx$/, exclude)
       const [filepath] = id.split('?')
-
       // use id for script blocks in Vue SFCs (e.g. `App.vue?vue&type=script&lang.jsx`)
       // use filepath for plain jsx files (e.g. App.jsx)
-      console.log(filter(id) || filter(filepath), 'filter(id) || filter(filepath)çç')
-      if (filter(id) || filter(filepath)) {
+      // if (!/\.vue$/.test(id)) {
+      //   console.log('id---', id)
+      //   console.log('code---', code)
+      // }
+      // if (filter(id) || filter(filepath)) {
+      console.log(id, 'id------', code)
+
+      const filter2 = createFilter([/\.css$/], [])
+      // const filter2 = createFilter([/\.[jt]sx$/, /\.vue$/, /\.css$/], [])
+      if (filter2(id)) {
+        console.log(id, 'id------', code)
+      }
+      if (filter(id)) {
+      //   if (filter(id) && filter(filepath)) {
+      // if (filter(id) || filter(filepath)) {
         const plugins = [importMeta]
         const presets = [
           [jsx, {
@@ -109,7 +116,6 @@ function vue2JsxPlugin(options = {}) {
             ...babelPresetOptions
           }]
         ]
-        console.log(id.endsWith('.tsx') || filepath.endsWith('.tsx'), "id.endsWith('.tsx') || filepath.endsWith('.tsx')")
         if (id.endsWith('.tsx') || filepath.endsWith('.tsx')) {
           plugins.push([
             // @ts-ignore missing type

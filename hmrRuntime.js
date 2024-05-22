@@ -4,7 +4,7 @@ export const HMR_RUNTIME_ID = 'plugin-vue2-jsx:hmr-runtime'
 export const hmrRuntimeCode = `
 var __VUE_HMR_RUNTIME__ = Object.create(null)
 var map = Object.create(null)
-
+console.log('0000000--------')
 __VUE_HMR_RUNTIME__.createRecord = function (id, options) {
   if(map[id]) { return }
 
