@@ -64,7 +64,9 @@ const createAppServer = async () => {
         render = (await import('./public/server/entry-server.js')).default
       }
 
-      const rendered = await render(url, ssrManifest)
+      const rendered = await render({
+        url
+      }, ssrManifest)
       const html = template
         .replace(`<!--app-head-->`, rendered.head ?? '')
         .replace(`<!--app-html-->`, rendered.html ?? '')
