@@ -52,17 +52,21 @@ const createAppServer = async () => {
       let template
       let render
       if (!isProduction) {
+        console.log(isProduction, 'isProduction----')
         // Always read fresh template in development
         template = await fs.readFile('./index.html', 'utf-8')
         template = await vite.transformIndexHtml(url, template)
-        render = (await vite.ssrLoadModule('/src/entry-server.js')).render
+        render = (await vite.ssrLoadModule('/src/entry-server.js')).default
+        console.log(render, 'render----')
       } else {
         template = templateHtml
         // @ts-ignore
-        render = (await import('./public/server/entry-server.js')).render
+        render = (await import('./public/server/entry-server.js')).default
       }
 
-      const rendered = await render(url, ssrManifest)
+      const rendered = await render({
+        url
+      }, ssrManifest)
       const html = template
         .replace(`<!--app-head-->`, rendered.head ?? '')
         .replace(`<!--app-html-->`, rendered.html ?? '')

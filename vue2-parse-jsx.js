@@ -41,12 +41,10 @@ function vue2JsxPlugin(options = {}) {
   let root = ''
   let needHmr = false
   let needSourceMap = true
-  console.log('load-jsx--------')
   return {
     name: 'vite:vue2-jsx',
 
     config(config) {
-      console.log('config----------')
       return {
         // only apply esbuild to ts files
         // since we are handling jsx and tsx now
@@ -57,14 +55,12 @@ function vue2JsxPlugin(options = {}) {
     },
 
     configResolved(config) {
-      console.log('configResolved----------', config)
       needHmr = config.command === 'serve' && !config.isProduction
       needSourceMap = config.command === 'serve' || !!config.build.sourcemap
       root = config.root
     },
 
     resolveId(id) {
-      console.log('resolveId----------')
       if (id === ssrRegisterHelperId) {
         return id
       }
@@ -75,7 +71,6 @@ function vue2JsxPlugin(options = {}) {
     },
 
     load(id) {
-      console.log('load----------')
       if (id === ssrRegisterHelperId) {
         return ssrRegisterHelperCode
       }
@@ -86,7 +81,6 @@ function vue2JsxPlugin(options = {}) {
     },
 
     async transform(code, id, opt) {
-      console.log('transform----------')
       const ssr = opt?.ssr === true
       const {
         include,
@@ -100,8 +94,8 @@ function vue2JsxPlugin(options = {}) {
 
       // use id for script blocks in Vue SFCs (e.g. `App.vue?vue&type=script&lang.jsx`)
       // use filepath for plain jsx files (e.g. App.jsx)
-      console.log(filter(id) || filter(filepath), 'filter(id) || filter(filepath)çç')
-      if (filter(id) || filter(filepath)) {
+      // console.log(id, 'id----')
+      if (filter(id)) {
         const plugins = [importMeta]
         const presets = [
           [jsx, {
@@ -109,8 +103,10 @@ function vue2JsxPlugin(options = {}) {
             ...babelPresetOptions
           }]
         ]
-        console.log(id.endsWith('.tsx') || filepath.endsWith('.tsx'), "id.endsWith('.tsx') || filepath.endsWith('.tsx')")
-        if (id.endsWith('.tsx') || filepath.endsWith('.tsx')) {
+        // console.log(id.endsWith('.tsx') || filepath.endsWith('.tsx'), "id.endsWith('.tsx') || filepath.endsWith('.tsx')")
+        if (id.endsWith('.tsx') || filepath.endsWith('.tsx') || id.includes('home')) {
+
+          console.log('tsx----', code)
           plugins.push([
             // @ts-ignore missing type
             await import('@babel/plugin-transform-typescript').then(

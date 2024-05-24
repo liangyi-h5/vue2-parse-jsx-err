@@ -1,15 +1,36 @@
-<script setup lang="jsx">
+<template>
+  <keep-alive :include="['Home', 'SubActivity', 'product_details', 'category', 'search', 'Favestes', 'dailySpecialDetail', 'flashSale', 'about']" max="11">
+    <router-view :key="curRouterLink" ref="pageComponent"></router-view>
+  </keep-alive>
+</template>
+
+<script>
+import Toast from './Toast.vue'
+// import Toasts from './toast/index'
 export default {
-  render () {
-    return (
-      <div class="product-images">
-        ascad
-      </div>
-    )
+  components: {
+    Toast
+  },
+  computed: {
+    curRouterLink () {
+      return this.$route.fullPath
+    }
+  },
+  mounted () {
+    // Toasts({
+    //   duration: 2000,
+    //   content: (
+    //     <span class="toast-text" place="points">
+    //       {'message'}
+    //     </span>
+    //   )
+    // })
   }
 }
 </script>
 
-<style>
-
-</style>
+<!-- <style>
+.product-images{
+  background: #f40;
+}
+</style> -->
